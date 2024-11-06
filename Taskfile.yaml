@@ -1,0 +1,19 @@
+version: "3"
+
+env:
+  # CODEGENERATION
+
+  # .proto files directory
+  PROTOS_DIR: ./protos
+  # generation directory
+  GOLANG_GEN_DIR: ./api/grpc
+  # scripts directory
+  SCRIPTS_DIR: ./scripts
+
+tasks:
+
+  generate-grpc-api:
+    desc: Generate golang code from proto files
+    aliases:
+      - gen
+    cmd: sh $SCRIPTS_DIR/generate.sh $GOLANG_GEN_DIR $PROTOS_DIR
