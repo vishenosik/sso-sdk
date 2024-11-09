@@ -1,0 +1,65 @@
+basePath: /
+definitions:
+  models.RegisterRequest:
+    properties:
+      email:
+        type: string
+      nickname:
+        type: string
+      pswd:
+        type: string
+    required:
+    - email
+    - nickname
+    - pswd
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: sso
+  version: 0.0.1
+paths:
+  /register/us/article_id:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Идентификатор баннера
+        example: 5bs8879f-1e45-4043-a8f6-a8f7b934f45a
+        in: path
+        name: article_id
+        required: true
+        type: string
+      - description: Данные пользователя
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterRequest'
+      responses:
+        "200":
+          description: OK
+        "406":
+          description: Not Acceptable
+        "417":
+          description: Expectation Failed
+        "500":
+          description: Internal Server Error
+      summary: Регистрация пользователя
+      tags:
+      - users
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
