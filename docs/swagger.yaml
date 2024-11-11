@@ -1,17 +1,11 @@
 basePath: /
 definitions:
-  models.RegisterRequest:
+  authentication.Account:
     properties:
-      email:
+      id:
         type: string
-      nickname:
-        type: string
-      pswd:
-        type: string
-    required:
-    - email
-    - nickname
-    - pswd
+    type: object
+  authentication.HTTPError:
     type: object
 externalDocs:
   description: OpenAPI
@@ -30,35 +24,55 @@ info:
   title: sso
   version: 0.0.1
 paths:
-  /register/us/article_id:
-    post:
+  /accounts/{id}:
+    get:
       consumes:
       - application/json
+      description: get string by ID
       parameters:
-      - description: Идентификатор баннера
-        example: 5bs8879f-1e45-4043-a8f6-a8f7b934f45a
+      - description: Account ID
         in: path
-        name: article_id
+        name: id
         required: true
-        type: string
-      - description: Данные пользователя
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.RegisterRequest'
+        type: integer
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-        "406":
-          description: Not Acceptable
-        "417":
-          description: Expectation Failed
+          schema:
+            $ref: '#/definitions/authentication.Account'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/authentication.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/authentication.HTTPError'
         "500":
           description: Internal Server Error
+          schema:
+            $ref: '#/definitions/authentication.HTTPError'
+      summary: Show an account
+      tags:
+      - accounts
+  /api/ping:
+    get:
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "406":
+          description: not ok
+          schema:
+            type: string
       summary: Регистрация пользователя
       tags:
-      - users
+      - system
 securityDefinitions:
   BasicAuth:
     type: basic
