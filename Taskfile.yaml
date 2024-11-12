@@ -1,21 +1,21 @@
 version: "3"
-  
-tasks:
 
-  generate:
-    internal: true
-    dotenv: ['.env']
-    cmd: 'sh {{.SDK_DIR}}/scripts/generate.sh $GOLANG_GEN_DIR'
+env:
+  SDK_DIR: '{{.TASKFILE_DIR}}'
+
+tasks:
     
-  generate-grpc-api:
-    desc: Generate golang code from proto files
-    dir: "{{.TASKFILE_DIR}}"
-    aliases: [gen]
+  go-generate-grpc-api:
+    desc: Generate golang gRPC client/server from proto files
+    aliases: [go-gen-grpc]
+    dotenv: ['.env']
+    silent: true
+    cmd: sh $SDK_DIR/scripts/generate.go.sh $GEN_DIR/grpc
+
+  go-generate-rest-api:
+    desc: Generate golang REST client from swagger docs
+    aliases: [go-gen-rest]
+    dotenv: ['.env']
     vars:
-      SDK_DIR:
-        sh: sh scripts/pwd.sh
-    cmds:
-      - task: generate
-        vars:
-          SDK_DIR:
-            ref: .SDK_DIR
+      CLIENT_DIR: $GEN_DIR/rest
+    cmd: swagger generate client -f $SDK_DIR/docs/swagger.yaml -c {{.CLIENT_DIR}}/client -m {{.CLIENT_DIR}}/models
