@@ -1,31 +1,25 @@
 #!/bin/bash
 
 GOLANG_GEN_DIR=$1
-PROTOS_DIR=$2
+
+SDK_PATH=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+PROTOS_DIR="$SDK_PATH/../protos"
 
 for VersionDir in $PROTOS_DIR/*; do
 
-    ApiVersion=$(basename "${VersionDir}")
+    API_VERSION=$(basename "${VersionDir}")
 
     for file in $VersionDir/*.proto; do
 
-        service=$(basename "${file%.*}" .proto)
-        dir="$GOLANG_GEN_DIR/$ApiVersion"
+        SERVICE=$(basename "${file%.*}" .proto)
 
+        dir="$GOLANG_GEN_DIR/$API_VERSION/$SERVICE"
         if ! [[ -d $dir ]]; then
-            mkdir $dir
+            mkdir -p $dir
         fi
 
-        dir="$GOLANG_GEN_DIR/$ApiVersion/$service"
-        if ! [[ -d $dir ]]; then
-            mkdir $dir
-        fi
-
-        echo "Generating service files: $service"
-        protoc -I $PROTOS_DIR/$ApiVersion "$PROTOS_DIR/$ApiVersion/$service.proto" --go_out=$dir --go_opt=paths=source_relative --go-grpc_out=$dir --go-grpc_opt=paths=source_relative
+        protoc -I $PROTOS_DIR/$API_VERSION "$PROTOS_DIR/$API_VERSION/$SERVICE.proto" --go_out=$dir --go_opt=paths=source_relative --go-grpc_out=$dir --go-grpc_opt=paths=source_relative
+        echo "Generating SERVICE: $SERVICE version: $API_VERSION Success"
 
     done
-
 done
-
-echo "Success"

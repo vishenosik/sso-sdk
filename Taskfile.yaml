@@ -5,6 +5,8 @@ tasks:
   generate-grpc-api:
     desc: Generate golang code from proto files
     dotenv: ['.env']
+    # internal: true
     aliases:
       - gen
-    cmd: sh $SCRIPTS_DIR/generate.sh $GOLANG_GEN_DIR $PROTOS_DIR
+    cmd: sh $SCRIPTS_DIR/generate.sh $GOLANG_GEN_DIR
+    
