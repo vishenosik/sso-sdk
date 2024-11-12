@@ -1,12 +1,21 @@
 version: "3"
-
+  
 tasks:
 
+  generate:
+    internal: true
+    dotenv: ['.env']
+    cmd: 'sh {{.SDK_DIR}}/scripts/generate.sh $GOLANG_GEN_DIR'
+    
   generate-grpc-api:
     desc: Generate golang code from proto files
-    dotenv: ['.env']
-    # internal: true
-    aliases:
-      - gen
-    cmd: sh $SCRIPTS_DIR/generate.sh $GOLANG_GEN_DIR
-    
+    dir: "{{.TASKFILE_DIR}}"
+    aliases: [gen]
+    vars:
+      SDK_DIR:
+        sh: sh scripts/pwd.sh
+    cmds:
+      - task: generate
+        vars:
+          SDK_DIR:
+            ref: .SDK_DIR
