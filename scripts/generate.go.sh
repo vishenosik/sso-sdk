@@ -1,15 +1,12 @@
 #!/bin/bash
 
 GOLANG_GEN_DIR=$1
+PROTOS_DIR=$2
 
-SDK_PATH=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
-PROTOS_DIR="$SDK_PATH/../protos"
-
-for VersionDir in $PROTOS_DIR/*; do
-
+for VersionDir in "$PROTOS_DIR"/*; do
     API_VERSION=$(basename "${VersionDir}")
 
-    for file in $VersionDir/*.proto; do
+    for file in "$VersionDir"/*.proto; do
 
         SERVICE=$(basename "${file%.*}" .proto)
 

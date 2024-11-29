@@ -10,7 +10,7 @@ tasks:
     aliases: [go-gen-grpc]
     dotenv: ['.env']
     silent: true
-    cmd: sh $SDK_DIR/scripts/generate.go.sh $GEN_DIR/grpc
+    cmd: sh $SDK_DIR/scripts/generate.go.sh $GEN_DIR/grpc $SDK_DIR/protos
 
   go-generate-rest-api:
     desc: Generate golang REST client from swagger docs
