@@ -36,23 +36,3 @@ message IsAdminRequest {
 message IsAdminResponse {
     bool is_admin = 1;
 }
-
-service Authorization {
-    rpc Role (RoleRequest) returns (RoleResponse);
-    rpc Roles (RolesRequest) returns (RoleResponse);
-}
-
-message RoleRequest {
-    string user_id = 1;
-}
-
-message RoleResponse {
-    string role = 1;
-}
-
-message RolesRequest {}
-
-message RolesResponse {
-    uint32 total = 1;
-    repeated string roles = 2;
-}
