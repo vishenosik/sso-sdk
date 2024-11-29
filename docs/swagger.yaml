@@ -1,12 +1,4 @@
 basePath: /
-definitions:
-  authentication.Account:
-    properties:
-      id:
-        type: string
-    type: object
-  authentication.HTTPError:
-    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -24,39 +16,6 @@ info:
   title: sso
   version: 0.0.1
 paths:
-  /accounts/{id}:
-    get:
-      consumes:
-      - application/json
-      description: get string by ID
-      parameters:
-      - description: Account ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/authentication.Account'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/authentication.HTTPError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/authentication.HTTPError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/authentication.HTTPError'
-      summary: Show an account
-      tags:
-      - accounts
   /api/ping:
     get:
       produces:
@@ -73,6 +32,53 @@ paths:
       summary: Регистрация пользователя
       tags:
       - system
+  /register:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Registers a new user with the provided nickname, email, and password
+      parameters:
+      - description: User's nickname
+        in: formData
+        name: nickname
+        required: true
+        type: string
+      - description: User's email
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: User's password
+        in: formData
+        name: pswd
+        required: true
+        type: string
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: Hello BITCH!
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "406":
+          description: Not Acceptable
+          schema:
+            type: string
+        "417":
+          description: Expectation Failed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Register a new user
+      tags:
+      - authentication
 securityDefinitions:
   BasicAuth:
     type: basic
