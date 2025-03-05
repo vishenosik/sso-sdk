@@ -5,21 +5,100 @@ package authorization.v1;
 option go_package = "github.com/blacksmith-vish/sso;authorization_v1";
 
 service Authorization {
-    rpc Role (RoleRequest) returns (RoleResponse);
-    rpc Roles (RolesRequest) returns (RoleResponse);
+
+    rpc AddRoles (AddRolesRequest)returns (AddRolesResponse);
+    rpc RemoveRoles (RemoveRolesRequest) returns (RemoveRolesResponse);
+    rpc Roles (RolesRequest) returns (RolesResponse);
+    rpc HasRole (HasRoleRequest) returns (HasRoleResponse);
+    rpc RolesAssigned (RolesAssignedRequest) returns (RolesAssignedResponse);
+    rpc AssignRoles (AssignRolesRequest) returns (AssignRolesResponse);
+    rpc RevokeRoles (RevokeRolesRequest) returns (RevokeRolesResponse);
+
+//    rpc AddPermission (AddPermissionRequest) returns (AddPermissionResponse);
+//    rpc RemovePermission (RemovePermissionRequest) returns (RemovePermissionResponse);
+//    rpc Permission (PermissionRequest) returns (PermissionResponse);
+//    rpc Permissions (PermissionsRequest) returns (PermissionsResponse);
+//    rpc AssignPermission (AssignPermissionRequest) returns (AssignPermissionResponse);
+//    rpc RevokePermission (RevokePermissionRequest) returns (RevokePermissionResponse);  
+//
+//    rpc GrantAccess (GrantAccessRequest) returns (GrantAccessResponse);
+//    rpc RevokeAccess (AccessRequest) returns (AccessResponse);
+//    rpc Access (AccessRequest) returns (AccessResponse);
 }
 
-message RoleRequest {
+message Authentication {
     string user_id = 1;
+    string app_id = 2;
 }
 
-message RoleResponse {
-    string role = 1;
+message RoleDescription {
+    string role_name = 1;
 }
 
-message RolesRequest {}
+message Role {
+    string role_id = 1;
+    RoleDescription role = 2;
+}
+
+message AddRolesRequest {
+    Authentication auth = 1;
+    repeated RoleDescription roles = 2;
+}
+
+message AddRolesResponse {
+    repeated Role roles = 1;
+}
+
+message RemoveRolesRequest {
+    Authentication auth = 1;
+    repeated string roles_ids = 2;
+}
+
+message RemoveRolesResponse {}
+
+message RolesRequest {
+    Authentication auth = 1;
+}
 
 message RolesResponse {
-    uint32 total = 1;
-    repeated string roles = 2;
+    repeated Role roles = 1;
+}
+
+message HasRoleRequest {
+    Authentication auth = 1;
+    string user_id = 2;
+    string role_id = 3;
+}
+
+message HasRoleResponse {
+    bool has_role = 1;
+}
+
+message RolesAssignedRequest {
+    Authentication auth = 1;
+    string user_id = 2;
+}
+
+message RolesAssignedResponse {
+    repeated Role roles = 1;
+}
+
+message AssignRolesRequest {
+    Authentication auth = 1;
+    string user_id = 2;
+    repeated string roles_ids = 3;
+}
+
+message AssignRolesResponse {
+    repeated Role roles = 1;
+}
+
+message RevokeRolesRequest {
+    Authentication auth = 1;
+    string user_id = 2;
+    repeated string roles_ids = 3;
+}
+
+message RevokeRolesResponse {
+    repeated Role roles = 1;
 }
