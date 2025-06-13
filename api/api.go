@@ -3,9 +3,54 @@ package api
 import (
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
+
 	"github.com/vishenosik/gocherry/pkg/errors"
+	_http "github.com/vishenosik/gocherry/pkg/http"
 	"google.golang.org/grpc/codes"
 )
+
+type Service interface {
+	Routers(r chi.Router)
+}
+
+// @title           sso
+// @version         0.0.1
+// @description     This is a sample server celler server.
+// @termsOfService  http://swagger.io/terms/
+//
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+//
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+//
+// @host      localhost:8080
+// @BasePath  /
+//
+// @securityDefinitions.basic  BasicAuth
+//
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
+func NewHttpHandler(services ...Service) http.Handler {
+
+	router := chi.NewRouter()
+	router.Use(
+		_http.SetHeaders(),
+		_http.RequestLogger(),
+	)
+
+	router.Get("/swagger/*", httpSwagger.Handler())
+
+	router.Route("/api", func(r chi.Router) {
+		for i := range services {
+			services[i].Routers(r)
+		}
+	})
+	return router
+}
 
 type httpErrMap interface {
 	Get(err error) int
