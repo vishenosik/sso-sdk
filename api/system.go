@@ -72,7 +72,7 @@ func (a *SystemApi) Ping() http.HandlerFunc {
 
 func (a *SystemApi) GetMetrics() http.HandlerFunc {
 
-	errmp := newErrorsMap(map[error]int{
+	errmp := httpErrorsMap(map[error]int{
 		errors.ErrNotFound: http.StatusNotFound,
 	})
 
