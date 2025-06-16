@@ -6,7 +6,7 @@ require (
 	github.com/go-chi/chi/v5 v5.2.1
 	github.com/swaggo/http-swagger/v2 v2.0.2
 	github.com/vishenosik/gocherry v0.0.2
-	google.golang.org/grpc v1.72.2
+	google.golang.org/grpc v1.72.1
 	google.golang.org/protobuf v1.36.6
 )
 
