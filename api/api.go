@@ -8,6 +8,8 @@ import (
 
 	"github.com/vishenosik/gocherry/pkg/errors"
 	_http "github.com/vishenosik/gocherry/pkg/http"
+
+	_ "github.com/vishenosik/sso-sdk/gen/swagger"
 	"google.golang.org/grpc/codes"
 )
 
@@ -28,7 +30,8 @@ type Service interface {
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 //
 // @host      localhost:8080
-// @BasePath  /
+// @BasePath  /api
+// @schemes http https
 //
 // @securityDefinitions.basic  BasicAuth
 //
@@ -37,18 +40,23 @@ type Service interface {
 func NewHttpHandler(services ...Service) http.Handler {
 
 	router := chi.NewRouter()
+
 	router.Use(
-		_http.SetHeaders(),
 		_http.RequestLogger(),
 	)
 
-	router.Get("/swagger/*", httpSwagger.Handler())
-
 	router.Route("/api", func(r chi.Router) {
+
+		r.Get("/swagger/*", httpSwagger.Handler(
+			httpSwagger.URL("doc.json"),
+		))
+
 		for i := range services {
 			services[i].Routers(r)
 		}
+
 	})
+
 	return router
 }
 

@@ -40,3 +40,5 @@ go.work.sum
 # Sqlite storage directory
 /storage
 /sso-sdk/
+
+cmd/

@@ -1,21 +1,24 @@
 version: "3"
 
-env:
-  SDK_DIR: '{{.TASKFILE_DIR}}'
-
 tasks:
     
   go-generate-grpc-api:
     desc: Generate golang gRPC client/server from proto files
     aliases: [go-gen-grpc]
-    dotenv: ['.env']
     silent: true
-    cmd: $SDK_DIR/scripts/generate.go.sh $GEN_DIR/grpc $SDK_DIR/protos
+    cmd: ./scripts/generate.go.sh ./gen/grpc ./protos
 
-  go-generate-rest-api:
+  go-generate-http-api:
     desc: Generate golang REST client from swagger docs
     aliases: [go-gen-rest]
-    dotenv: ['.env']
-    vars:
-      CLIENT_DIR: $GEN_DIR/rest
-    cmd: swagger generate client -f $SDK_DIR/docs/swagger.yaml -c {{.CLIENT_DIR}}/client -m {{.CLIENT_DIR}}/models
+    cmd: oapi-codegen -generate types,client -package client ./docs/swagger/sso_OAS_3_1_swagger.yaml > gen/client/client.gen.go
+
+  docs:
+    desc: Generate docs
+    cmds:
+      # make internal docs OAS 3.1 (go-based)
+      - swag init -g ./api/api.go --exclude gen/ -v3.1 -o ./gen/swagger --ot go
+      # make sdk docs OAS 3.1 (json,yaml)
+      - swag init -g ./api/api.go --exclude gen/ -v3.1 -o ./docs/swagger --ot json,yaml --instanceName sso_OAS_3_1
+      # make sdk docs OAS 2.0 (json,yaml)
+      - swag init -g ./api/api.go --exclude gen/ -o ./docs/swagger --ot json,yaml --instanceName sso_OAS_2_0

@@ -58,15 +58,11 @@ func NewAuthenticationApi(auth Authentication) *authapi {
 	}
 }
 
-// ping godoc
-//
-//	@Summary 	Регистрация пользователя
-//	@Tags 		system
-//	@Router 	/api/ping [get]
-//	@Produce 	html
-//	@Success 	200 {string}  string    "ok"
-//	@Failure 	406 {string}  string    "not ok"
 func (a *authapi) Routers(r chi.Router) {
+
+	r.With(
+		_http.SetHeaders(),
+	)
 
 	r.Group(func(r chi.Router) {
 		r.Route(a.registerUser())

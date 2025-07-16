@@ -1,14 +1,17 @@
 package client
 
 import (
+	"context"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/vishenosik/sso-sdk/api"
+	"github.com/vishenosik/sso-sdk/gen/client"
 )
 
-func (c *client) Ping() error {
+func (c *Client) Ping() error {
 	request, err := c.newRequest(http.MethodGet, api.PingMethod, nil)
 	if err != nil {
 		return err
@@ -25,6 +28,33 @@ func (c *client) Ping() error {
 		return err
 	}
 	fmt.Println(string(body))
+
+	return nil
+}
+
+func Ping2() error {
+
+	cli, err := client.NewClient("http://localhost:8080")
+	if err != nil {
+		return err
+	}
+
+	resp, err := cli.GetApiSystemPing(context.TODO(), &client.GetApiSystemPingParams{
+		Q: "hello",
+	})
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	log.Println(resp.StatusCode)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("error reading response body: %w", err)
+	}
+
+	log.Println("Response Body:", string(body))
 
 	return nil
 }

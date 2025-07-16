@@ -13,8 +13,6 @@ type Client struct {
 	config Config
 }
 
-type client = Client
-
 type Config struct {
 	Server config.Server
 }
@@ -28,7 +26,7 @@ func NewClient(config Config) *Client {
 	}
 }
 
-func (c *client) newRequest(method, url string, body io.Reader) (*http.Request, error) {
+func (c *Client) newRequest(method, url string, body io.Reader) (*http.Request, error) {
 	const prefix = "api"
 	return http.NewRequest(
 		method,

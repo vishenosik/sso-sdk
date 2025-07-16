@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -45,6 +46,11 @@ func NewSystemApi(
 func (a *SystemApi) Routers(r chi.Router) {
 
 	r.Group(func(r chi.Router) {
+
+		r.With(
+			_http.SetHeaders(),
+		)
+
 		r.Get(PingMethod, a.Ping())
 
 		r.Route(GetMetricsMethod, func(r chi.Router) {
@@ -54,8 +60,24 @@ func (a *SystemApi) Routers(r chi.Router) {
 	})
 }
 
+// ping godoc
+//
+//	@Summary 	Check system health
+//	@Tags 		system
+//	@Router 	/system.ping [get]
+//	@Produce 	json
+//
+//	@Param q query string true "Search query"
+//
+//	@Success 	200 {string}  string    "ok"
+//	@Failure 	406 {string}  string    "not ok"
 func (a *SystemApi) Ping() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		q := r.URL.Query().Get("q")
+
+		log.Println(q)
+
 		response := struct {
 			Message string `json:"message"`
 		}{

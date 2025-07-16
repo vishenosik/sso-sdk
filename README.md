@@ -10,7 +10,7 @@ Clone this repo to start working.
 #### Swagger util [go-swagger](https://github.com/go-swagger/go-swagger) to generate golang REST client
 
 ```bash
-go install github.com/go-swagger/go-swagger/cmd/swagger@latest
+go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest (v2.4.1)
 ```
 
 #### Protobuf util [protoc](https://grpc.io/docs/protoc-installation/) to generate golang gRPC client

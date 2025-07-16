@@ -1,0 +1,10 @@
+{
+    "components": {"securitySchemes":{"basic":{"scheme":"basic","type":"http"}}},
+    "info": {"contact":{"email":"support@swagger.io","name":"API Support","url":"http://www.swagger.io/support"},"description":"This is a sample server celler server.","license":{"name":"Apache 2.0","url":"http://www.apache.org/licenses/LICENSE-2.0.html"},"termsOfService":"http://swagger.io/terms/","title":"sso","version":"0.0.1"},
+    "externalDocs": {"description":"OpenAPI","url":"https://swagger.io/resources/open-api/"},
+    "paths": {"/system.ping":{"get":{"parameters":[{"description":"Search query","in":"query","name":"q","required":true,"schema":{"type":"string"}}],"responses":{"200":{"content":{"application/json":{"schema":{"type":"string"}}},"description":"ok"},"406":{"content":{"application/json":{"schema":{"type":"string"}}},"description":"not ok"}},"summary":"Check system health","tags":["system"]}}},
+    "openapi": "3.1.0",
+    "servers": [
+        {"url":"localhost:8080/api"}
+    ]
+}
