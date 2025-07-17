@@ -10,15 +10,15 @@ tasks:
 
   go-generate-http-api:
     desc: Generate golang REST client from swagger docs
-    aliases: [go-gen-rest]
-    cmd: oapi-codegen -generate types,client -package client ./docs/swagger/sso_OAS_3_1_swagger.yaml > gen/client/client.gen.go
+    aliases: [go-gen-http]
+    cmd: oapi-codegen -config ./configs/oapi-codegen.yaml ./docs/swagger/sso_OAS_3_1_swagger.yaml
 
   docs:
     desc: Generate docs
     cmds:
-      # make internal docs OAS 3.1 (go-based)
-      - swag init -g ./api/api.go --exclude gen/ -v3.1 -o ./gen/swagger --ot go
       # make sdk docs OAS 3.1 (json,yaml)
-      - swag init -g ./api/api.go --exclude gen/ -v3.1 -o ./docs/swagger --ot json,yaml --instanceName sso_OAS_3_1
+      - swag init -g ./api/api.go --exclude gen/ -o ./docs/swagger --ot json,yaml --instanceName sso_OAS_3_1 -v3.1
       # make sdk docs OAS 2.0 (json,yaml)
       - swag init -g ./api/api.go --exclude gen/ -o ./docs/swagger --ot json,yaml --instanceName sso_OAS_2_0
+      # make internal docs OAS 2.0 (go-based)
+      - swag init -g ./api/api.go --exclude gen/ -o ./gen/swagger --ot go

@@ -4,12 +4,13 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	httpSwagger "github.com/swaggo/http-swagger/v2"
+	"github.com/go-chi/chi/v5/middleware"
 
 	"github.com/vishenosik/gocherry/pkg/errors"
 	_http "github.com/vishenosik/gocherry/pkg/http"
+	"github.com/vishenosik/gocherry/pkg/httpSwagger"
 
-	_ "github.com/vishenosik/sso-sdk/gen/swagger"
+	"github.com/vishenosik/sso-sdk/gen/swagger"
 	"google.golang.org/grpc/codes"
 )
 
@@ -29,9 +30,7 @@ type Service interface {
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 //
-// @host      localhost:8080
-// @BasePath  /api
-// @schemes http https
+// @servers.url http://localhost:8080
 //
 // @securityDefinitions.basic  BasicAuth
 //
@@ -39,25 +38,23 @@ type Service interface {
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func NewHttpHandler(services ...Service) http.Handler {
 
-	router := chi.NewRouter()
+	services = append(services, []Service{
+		httpSwagger.NewSwagger(swagger.SwaggerInfo),
+	}...)
 
-	router.Use(
+	r := chi.NewRouter()
+	r.Use(
+		middleware.Recoverer,
 		_http.RequestLogger(),
 	)
 
-	router.Route("/api", func(r chi.Router) {
-
-		r.Get("/swagger/*", httpSwagger.Handler(
-			httpSwagger.URL("doc.json"),
-		))
-
+	r.Route("/api", func(r chi.Router) {
 		for i := range services {
 			services[i].Routers(r)
 		}
-
 	})
 
-	return router
+	return r
 }
 
 type httpErrMap interface {

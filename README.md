@@ -7,10 +7,10 @@ Clone this repo to start working.
 
 ### Dependencies
 
-#### Swagger util [go-swagger](https://github.com/go-swagger/go-swagger) to generate golang REST client
+#### Swagger util [oapi-codegen](github.com/oapi-codegen/oapi-codegen) to generate golang REST client
 
 ```bash
-go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest (v2.4.1)
+go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest (v2.5.0)
 ```
 
 #### Protobuf util [protoc](https://grpc.io/docs/protoc-installation/) to generate golang gRPC client
@@ -26,11 +26,4 @@ go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 
 ---
 
-For better user-experience include Taskfile.yaml to your root Taskfile by adding following lines:
 
-```yaml
-includes:
-  sdk:
-    taskfile: ./sso-sdk/Taskfile.yaml
-    optional: true
-```

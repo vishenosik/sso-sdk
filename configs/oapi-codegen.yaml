@@ -1,0 +1,11 @@
+# oapi-codegen v2.5.0 configuration
+package: client
+output: gen/client/client.gen.go
+
+generate:
+  models: true
+  client: true
+
+output-options:
+  skip-prune: false
+  prefer-skip-optional-pointer: true

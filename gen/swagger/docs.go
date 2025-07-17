@@ -2,36 +2,25 @@
 
 package swagger
 
-import (
-	"log"
-
-	"github.com/swaggo/swag/v2"
-)
+import "github.com/swaggo/swag/v2"
 
 const docTemplate = `{
-    "schemes": {{ marshal .Schemes }},
-    "components": {"securitySchemes":{"basic":{"scheme":"basic","type":"http"}}},
-    "info": {"contact":{"email":"support@swagger.io","name":"API Support","url":"http://www.swagger.io/support"},"description":"{{escape .Description}}","license":{"name":"Apache 2.0","url":"http://www.apache.org/licenses/LICENSE-2.0.html"},"termsOfService":"http://swagger.io/terms/","title":"{{.Title}}","version":"{{.Version}}"},
-    "externalDocs": {"description":"OpenAPI","url":"https://swagger.io/resources/open-api/"},
-    "paths": {"/system.ping":{"get":{"parameters":[{"description":"Search query","in":"query","name":"q","required":true,"schema":{"type":"string"}}],"responses":{"200":{"content":{"application/json":{"schema":{"type":"string"}}},"description":"ok"},"406":{"content":{"application/json":{"schema":{"type":"string"}}},"description":"not ok"}},"summary":"Check system health","tags":["system"]}}},
-    "openapi": "3.1.0",
-    "servers": [
-        {"url":"localhost:8080/api"}
-    ]
-}`
+    "schemes": {{ marshal .Schemes }},"swagger":"2.0","info":{"description":"{{escape .Description}}","title":"{{.Title}}","termsOfService":"http://swagger.io/terms/","contact":{"name":"API Support","url":"http://www.swagger.io/support","email":"support@swagger.io"},"license":{"name":"Apache 2.0","url":"http://www.apache.org/licenses/LICENSE-2.0.html"},"version":"{{.Version}}"},"host":"{{.Host}}","basePath":"{{.BasePath}}","paths":{"/api/system.metrics/log":{"post":{"produces":["application/json"],"tags":["system"],"summary":"Check system health","parameters":[{"description":"Metrics","name":"metrics","in":"body","required":true,"schema":{"type":"array","items":{"$ref":"#/definitions/api.Metric"}}}],"responses":{"200":{"description":"not ok","schema":{"$ref":"#/definitions/api.PingResponse"}},"406":{"description":"not ok","schema":{"type":"string"}}}}},"/api/system.ping":{"get":{"produces":["application/json"],"tags":["system"],"summary":"Check system health","parameters":[{"type":"string","description":"Search query","name":"q","in":"query"}],"responses":{"200":{"description":"not ok","schema":{"$ref":"#/definitions/api.PingResponse"}},"406":{"description":"not ok","schema":{"type":"string"}}}}}},"definitions":{"api.Metric":{"type":"object","properties":{"param_one":{"type":"string"},"param_three":{"type":"string"},"param_two":{"type":"string"}}},"api.PingResponse":{"type":"object","properties":{"message":{"type":"string"},"search":{"type":"string"}}}},"securityDefinitions":{"BasicAuth":{"type":"basic"}},"externalDocs":{"description":"OpenAPI","url":"https://swagger.io/resources/open-api/"}}`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "0.0.1",
+	Host:             "",
+	BasePath:         "",
+	Schemes:          []string{},
 	Title:            "sso",
 	Description:      "This is a sample server celler server.",
-	InfoInstanceName: "sso",
+	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
 	RightDelim:       "}}",
 }
 
 func init() {
-	log.Println(SwaggerInfo.InstanceName(), SwaggerInfo)
 	swag.Register(SwaggerInfo.InstanceName(), SwaggerInfo)
 }

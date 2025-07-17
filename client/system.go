@@ -56,5 +56,27 @@ func Ping2() error {
 
 	log.Println("Response Body:", string(body))
 
+	resp, err = cli.PostApiSystemMetricsLog(context.TODO(),
+		[]client.ApiMetric{
+			{
+				ParamOne:   "param_one",
+				ParamTwo:   "param_two",
+				ParamThree: "param_three",
+			},
+		})
+
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	log.Println(resp.StatusCode)
+
+	body, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("error reading response body: %w", err)
+	}
+
+	log.Println("Response Body:", string(body))
 	return nil
 }
