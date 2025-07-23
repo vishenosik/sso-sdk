@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/vishenosik/gocherry/pkg/errors"
 	_http "github.com/vishenosik/gocherry/pkg/http"
-	"github.com/vishenosik/sso-sdk/errors"
 )
 
 var (
@@ -50,14 +50,14 @@ func (a *SystemApi) Routers(r chi.Router) {
 
 	r.Group(func(r chi.Router) {
 
-		r.With(
+		r.Use(
 			_http.SetHeaders(),
 		)
 
 		r.Get(PingMethod, a.Ping())
 
 		r.Route(GetMetricsMethod, func(r chi.Router) {
-			r.Get(_http.BlankRoute, a.GetMetrics())
+			r.Method(http.MethodGet, _http.BlankRoute, a.GetMetrics())
 			r.Post("/log", a.LogMetrics())
 		})
 	})
@@ -98,33 +98,46 @@ func (a *SystemApi) Ping() http.HandlerFunc {
 	}
 }
 
-func (a *SystemApi) GetMetrics() http.HandlerFunc {
+func (a *SystemApi) GetMetrics() http.Handler {
 
-	errmp := httpErrorsMap(map[error]int{
-		errors.ErrNotFound: http.StatusNotFound,
-	})
+	// errmp := httpErrorsMap(map[error]int{
+	// 	ErrNotFound: http.StatusNotFound,
+	// })
 
-	return func(w http.ResponseWriter, r *http.Request) {
+	return _http.HandlerWithError(func(w http.ResponseWriter, r *http.Request) error {
+
+		q := r.URL.Query().Get("q")
+
+		mulerr := new(errors.MultiError)
+		mulerr.Append(ErrNotFound)
+		mulerr.Append(ErrAppInvalidID)
+		mulerr.Append(ErrInvalidRequest)
+
+		switch q {
+		case "multi-error":
+			return _http.NewError(http.StatusConflict, mulerr)
+
+		case "error":
+			return _http.NewError(http.StatusConflict, errors.New("single error"))
+		}
 
 		metrics, err := a.metrics.GetMetrics()
 		if err != nil {
-			http.Error(w, "failed to get metrics", errmp.Get(err))
-			return
+			return errors.Wrap(ErrNotFound, "failed to get metrics")
 		}
 
 		if len(metrics) == 0 {
-			http.Error(w, "no metrics found", http.StatusNoContent)
-			return
+			return errors.Wrap(ErrNotFound, "no metrics found")
 		}
 
 		resp, err := json.Marshal(metrics)
 		if err != nil {
-			http.Error(w, "failed to encode response", http.StatusInternalServerError)
-			return
+			return errors.Wrap(ErrNotFound, "failed to encode response")
 		}
 
 		w.Write(resp)
-	}
+		return nil
+	})
 }
 
 // LogMetrics godoc

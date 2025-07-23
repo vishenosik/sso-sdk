@@ -59,12 +59,10 @@ func NewAuthenticationApi(auth Authentication) *authapi {
 }
 
 func (a *authapi) Routers(r chi.Router) {
-
-	r.With(
-		_http.SetHeaders(),
-	)
-
 	r.Group(func(r chi.Router) {
+		r.Use(
+			_http.SetHeaders(),
+		)
 		r.Route(a.registerUser())
 	})
 }

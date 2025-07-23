@@ -1,6 +1,8 @@
-package errors
+package api
 
 import (
+	"net/http"
+
 	"github.com/vishenosik/gocherry/pkg/errors"
 	"google.golang.org/grpc/codes"
 )
@@ -68,21 +70,32 @@ var (
 	ErrAlreadyExists = errors.New("exists already")
 )
 
-var (
-	ServiceErrorsToGrpcCodes = errors.NewErrorsMap(
-		codes.Internal,
-		map[error]codes.Code{
-			ErrInvalidRequest:     codes.InvalidArgument,
-			ErrAppNotFound:        codes.NotFound,
-			ErrAppInvalidID:       codes.InvalidArgument,
-			ErrAppsStore:          codes.Internal,
-			ErrUserExists:         codes.AlreadyExists,
-			ErrUsersStore:         codes.Internal,
-			ErrUserInvalidID:      codes.InvalidArgument,
-			ErrUserNotFound:       codes.NotFound,
-			ErrInvalidCredentials: codes.Unauthenticated,
-			ErrGenerateHash:       codes.Internal,
-			ErrPasswordTooLong:    codes.InvalidArgument,
-		},
-	)
-)
+var ServiceErrorsToGrpcCodes = errors.NewErrorsMap(codes.Internal,
+	map[error]codes.Code{
+		ErrInvalidRequest:     codes.InvalidArgument,
+		ErrAppNotFound:        codes.NotFound,
+		ErrAppInvalidID:       codes.InvalidArgument,
+		ErrAppsStore:          codes.Internal,
+		ErrUserExists:         codes.AlreadyExists,
+		ErrUsersStore:         codes.Internal,
+		ErrUserInvalidID:      codes.InvalidArgument,
+		ErrUserNotFound:       codes.NotFound,
+		ErrInvalidCredentials: codes.Unauthenticated,
+		ErrGenerateHash:       codes.Internal,
+		ErrPasswordTooLong:    codes.InvalidArgument,
+	})
+
+var ServiceErrorsToHttpCodes = errors.NewErrorsMap(http.StatusInternalServerError,
+	map[error]int{
+		ErrInvalidRequest:     http.StatusNotAcceptable,
+		ErrAppNotFound:        http.StatusBadRequest,
+		ErrAppInvalidID:       http.StatusNotAcceptable,
+		ErrAppsStore:          http.StatusInternalServerError,
+		ErrUserExists:         http.StatusConflict,
+		ErrUsersStore:         http.StatusInternalServerError,
+		ErrUserInvalidID:      http.StatusInternalServerError,
+		ErrUserNotFound:       http.StatusInternalServerError,
+		ErrInvalidCredentials: http.StatusForbidden,
+		ErrGenerateHash:       http.StatusNotImplemented,
+		ErrPasswordTooLong:    http.StatusNotAcceptable,
+	})
