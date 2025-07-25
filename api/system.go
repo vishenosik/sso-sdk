@@ -114,11 +114,18 @@ func (a *SystemApi) GetMetrics() http.Handler {
 		mulerr.Append(ErrInvalidRequest)
 
 		switch q {
+		case "multi-error-wrapped":
+			e := errors.Wrap(mulerr, "multi-error")
+			return _http.NewError(http.StatusConflict, e)
+
 		case "multi-error":
 			return _http.NewError(http.StatusConflict, mulerr)
 
 		case "error":
 			return _http.NewError(http.StatusConflict, errors.New("single error"))
+
+		case "error-non-http":
+			return errors.New("single error-non-http")
 		}
 
 		metrics, err := a.metrics.GetMetrics()
