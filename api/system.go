@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -100,15 +101,26 @@ func (a *SystemApi) Ping() http.HandlerFunc {
 
 func (a *SystemApi) GetMetrics() http.Handler {
 
-	// errmp := httpErrorsMap(map[error]int{
-	// 	ErrNotFound: http.StatusNotFound,
-	// })
+	handler := func(versions ...string) _http.HandlersMap {
+		mp := make(_http.HandlersMap)
+		for _, version := range versions {
+			mp[version] = getMetrics(a, version)
+		}
+		return mp
+	}
+
+	return _http.ApiVersionHandler(handler("1.1", "2.1", "1.3"))
+
+}
+
+func getMetrics(a *SystemApi, version string) http.Handler {
 
 	return _http.HandlerWithError(func(w http.ResponseWriter, r *http.Request) error {
 
 		q := r.URL.Query().Get("q")
 
 		mulerr := new(errors.MultiError)
+		mulerr.Append(fmt.Errorf("version: %s", version))
 		mulerr.Append(ErrNotFound)
 		mulerr.Append(ErrAppInvalidID)
 		mulerr.Append(ErrInvalidRequest)
@@ -122,10 +134,10 @@ func (a *SystemApi) GetMetrics() http.Handler {
 			return _http.NewError(http.StatusConflict, mulerr)
 
 		case "error":
-			return _http.NewError(http.StatusConflict, errors.New("single error"))
+			return _http.NewError(http.StatusConflict, fmt.Errorf("single error; version: %s", version))
 
 		case "error-non-http":
-			return errors.New("single error-non-http")
+			return fmt.Errorf("single error-non-http; version: %s", version)
 		}
 
 		metrics, err := a.metrics.GetMetrics()

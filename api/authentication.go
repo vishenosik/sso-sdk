@@ -50,15 +50,13 @@ type AuthenticationApi struct {
 	auth Authentication
 }
 
-type authapi = AuthenticationApi
-
-func NewAuthenticationApi(auth Authentication) *authapi {
-	return &authapi{
+func NewAuthenticationApi(auth Authentication) *AuthenticationApi {
+	return &AuthenticationApi{
 		auth: auth,
 	}
 }
 
-func (a *authapi) Routers(r chi.Router) {
+func (a *AuthenticationApi) Routers(r chi.Router) {
 	r.Group(func(r chi.Router) {
 		r.Use(
 			_http.SetHeaders(),
@@ -67,29 +65,24 @@ func (a *authapi) Routers(r chi.Router) {
 	})
 }
 
-func (a *authapi) RegisterService(server *grpc.Server) {
+func (a *AuthenticationApi) RegisterService(server *grpc.Server) {
 	authentication_v1.RegisterAuthenticationServer(server, a)
 }
 
 /*
-HTTP handlers
+	HTTP handlers
 */
 
-func (a *authapi) registerUser() (string, func(chi.Router)) {
-
-	versionMiddleware, versionHandler := _http.DotVersionMiddlewareHandler("1.0")
+func (a *AuthenticationApi) registerUser() (string, func(chi.Router)) {
 
 	return routeAuth("register"), func(r chi.Router) {
-		r.Use(
-			versionMiddleware,
-		)
-		r.Post(_http.BlankRoute, versionHandler(_http.HandlersMap{
+		r.Method(http.MethodPost, _http.BlankRoute, _http.ApiVersionHandler(_http.HandlersMap{
 			"1.0": a.registerUser_1_0(),
 		}))
 	}
 }
 
-func (a *authapi) registerUser_1_0() http.HandlerFunc {
+func (a *AuthenticationApi) registerUser_1_0() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 	}
@@ -98,7 +91,7 @@ func (a *authapi) registerUser_1_0() http.HandlerFunc {
 var routeAuth = _http.MethodFunc("auth")
 
 /*
-gRPC handlers
+	gRPC handlers
 */
 
 // IsAdmin Checks if the user with the given ID is an admin.
@@ -112,7 +105,7 @@ gRPC handlers
 //
 //	isAdmin: A boolean value indicating if the user is an admin.
 //	err: An error if an issue occurs during the check.
-func (a *authapi) IsAdmin(
+func (a *AuthenticationApi) IsAdmin(
 	ctx context.Context,
 	request *authentication_v1.IsAdminRequest,
 ) (*authentication_v1.IsAdminResponse, error) {
@@ -151,7 +144,7 @@ func (a *authapi) IsAdmin(
 //
 //	token: string representing user token.
 //	err: error if an issue occurs during the login process.
-func (a *authapi) Login(
+func (a *AuthenticationApi) Login(
 	ctx context.Context,
 	request *authentication_v1.LoginRequest,
 ) (*authentication_v1.LoginResponse, error) {
@@ -184,7 +177,7 @@ func (a *authapi) Login(
 //
 //	userID: A string representing the user ID.
 //	err: An error if an issue occurs during the registration process.
-func (a *authapi) Register(
+func (a *AuthenticationApi) Register(
 	ctx context.Context,
 	request *authentication_v1.RegisterRequest,
 ) (*authentication_v1.RegisterResponse, error) {

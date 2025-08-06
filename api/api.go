@@ -57,16 +57,8 @@ func NewHttpHandler(services ...Service) http.Handler {
 	return r
 }
 
-type httpErrMap interface {
-	Get(err error) int
-}
-
 type grpcErrMap interface {
 	Get(err error) codes.Code
-}
-
-func httpErrorsMap(_map_ map[error]int) httpErrMap {
-	return errors.NewErrorsMap(http.StatusInternalServerError, _map_)
 }
 
 func grpcErrorsMap(_map_ map[error]codes.Code) grpcErrMap {
